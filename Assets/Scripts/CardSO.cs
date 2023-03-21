@@ -9,4 +9,5 @@ public class CardSO : ScriptableObject
     public string display;
     public Suit suit;
     public Sprite suitSprite;
+    public Color suitColor;
 }

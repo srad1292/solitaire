@@ -15,4 +15,5 @@ MonoBehaviour:
   value: 4
   display: 4
   suit: 2
-  suitSprite: {fileID: 0}
+  suitSprite: {fileID: 21300000, guid: ba00183a47f05cb42bc6180a13bec3ff, type: 3}
+  suitColor: {r: 0.9137255, g: 0.023529412, b: 0.023529412, a: 1}
