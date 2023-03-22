@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlacePoint : MonoBehaviour
 {
-    public Location location;
+    [SerializeField] Location location;
 
     public List<Card> cards;
 }

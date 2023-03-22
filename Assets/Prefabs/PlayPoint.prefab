@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 3866056027644671599}
   - component: {fileID: 3866056027644671597}
   - component: {fileID: 3866056027644671596}
-  m_Layer: 0
+  - component: {fileID: 365218253396650105}
+  m_Layer: 7
   m_Name: PlayPoint
   m_TagString: PlacePoint
   m_Icon: {fileID: 0}
@@ -99,3 +100,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   location: 1
   cards: []
+--- !u!65 &365218253396650105
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3866056027644671598}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.38, y: 2.12, z: 0.2}
+  m_Center: {x: 0, y: 0, z: 0}

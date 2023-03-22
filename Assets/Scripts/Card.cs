@@ -12,10 +12,92 @@ public class Card : MonoBehaviour
     public CardSO cardSO;
     public bool isFaceUp = false;
     public PlacePoint placePoint;
+    [SerializeField] float moveSpeed = 5f;
+    [SerializeField] float rotateSpeed = 500f;
+    [SerializeField] LayerMask tableLayer;
+    [SerializeField] LayerMask placementLayer;
+    
+    BoxCollider myCollider;
+
+
     private bool isSelected = false;
+    private bool justPressed = false;
+
+    private Vector3 targetPoint;
+    private Quaternion targetRotation;
+    private Vector3 lastLocation;
+    private Quaternion lastRotation;
+    private PlacePoint lastPlacePoint;
+
+
 
     private void Start() {
+        myCollider = GetComponent<BoxCollider>();
+        targetPoint = transform.position;
+        targetRotation = transform.rotation;
         UpdateDisplay();
+    }
+
+    private void Update() {
+        transform.position = Vector3.Lerp(transform.position, targetPoint, moveSpeed * Time.deltaTime);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotateSpeed * Time.deltaTime);
+
+        if (isSelected) {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, 100f, tableLayer)) {
+                MoveToPoint(hit.point + new Vector3(0, 2f, 0), Quaternion.identity);
+            }
+            if (Input.GetMouseButtonDown(0) && !justPressed) {
+                if(Physics.Raycast(ray, out hit, 100f, placementLayer)) {
+                    PlacePoint selectedPoint = hit.collider.GetComponent<PlacePoint>();
+                    print("Selected Point is null? " + selectedPoint == null);
+                    if(selectedPoint != null)
+                        print("Selected Point Card Count = " + selectedPoint.cards.Count);
+                    if(selectedPoint != null && selectedPoint.cards.Count == 0) {
+                        PlaceCard(selectedPoint, selectedPoint.transform.position, selectedPoint.transform.rotation);
+                    } else {
+                        PlaceCard(lastPlacePoint, lastLocation, lastRotation);
+                    }
+                } else {
+                    PlaceCard(lastPlacePoint, lastLocation, lastRotation);
+                }
+                
+            }
+
+            if (Input.GetMouseButtonDown(1)) {
+                PlaceCard(lastPlacePoint, lastLocation, lastRotation);
+            }
+        }
+
+        justPressed = false;
+    }
+
+    private void PlaceCard(PlacePoint point, Vector3 location, Quaternion rotation) {
+        MoveToPoint(location, rotation);
+        placePoint = point;
+        if(lastPlacePoint.cards.Contains(this)) {
+            lastPlacePoint.cards.Remove(this);
+        }
+        point.cards.Add(this);
+        isSelected = false;
+        myCollider.enabled = true;
+    }
+
+    private void OnMouseDown() {
+        if(!isSelected) {
+            justPressed = true;
+            lastLocation = transform.position;
+            lastRotation = transform.rotation;
+            lastPlacePoint = placePoint;
+            isSelected = true;
+            myCollider.enabled = false;
+        } 
+    }
+
+    public void MoveToPoint(Vector3 destination, Quaternion rotation) {
+        targetPoint = destination;
+        targetRotation = rotation;
     }
 
     public void SetSO(CardSO cardSO) {
@@ -35,5 +117,7 @@ public class Card : MonoBehaviour
             img.color = cardSO.suitColor;
         }
     }
+
+
 
 }
