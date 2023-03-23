@@ -33,8 +33,10 @@ public class Card : MonoBehaviour
 
     private void Start() {
         myCollider = GetComponent<BoxCollider>();
-        targetPoint = transform.position;
-        targetRotation = transform.rotation;
+        if (targetPoint == Vector3.zero) {
+            targetPoint = transform.position;
+            targetRotation = transform.rotation;
+        }
         UpdateDisplay();
     }
 
@@ -46,7 +48,7 @@ public class Card : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, 100f, tableLayer)) {
-                MoveToPoint(hit.point + new Vector3(0, 2f, 0), Quaternion.identity);
+                MoveToPoint(hit.point + new Vector3(0, 2f, -2f), Quaternion.identity);
             }
             if (Input.GetMouseButtonDown(0) && !justPressed) {
                 if(Physics.Raycast(ray, out hit, 100f, placementLayer)) {
@@ -85,7 +87,8 @@ public class Card : MonoBehaviour
     }
 
     private void OnMouseDown() {
-        if(!isSelected) {
+        if(!isSelected && isFaceUp) {
+            print("I am a selected card");
             justPressed = true;
             lastLocation = transform.position;
             lastRotation = transform.rotation;
@@ -106,7 +109,7 @@ public class Card : MonoBehaviour
     }
 
     private void UpdateDisplay() {
-        if(cardSO == null) { return; }
+        if(cardSO == null) { print("Updating display with null so"); return; }
 
         foreach (TMP_Text text in numberDisplays) {
             text.SetText(cardSO.display);
