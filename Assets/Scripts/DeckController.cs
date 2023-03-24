@@ -5,6 +5,16 @@ using UnityEngine;
 public class DeckController : MonoBehaviour
 {
 
+    public static DeckController Instance;
+
+    private void Awake() {
+        if(Instance != null && Instance != this) {
+            Destroy(this);
+        } else {
+            Instance = this;
+        }
+    }
+
     public Card cardToSpawn;
 
     [SerializeField] CardSO[] deck;
@@ -13,18 +23,14 @@ public class DeckController : MonoBehaviour
 
     public List<CardSO> remaining;
 
-    public List<CardSO> flipped;
-
     public PlacePoint discardPile;
 
     private bool canDraw = true;
 
     private void Start() {
-
-        ShuffleDeckIntoRemaining();
     }
 
-    private void ShuffleDeckIntoRemaining() {
+    public void ShuffleDeckIntoRemaining() {
         remaining.Clear();
         List<CardSO> deckCopy = new List<CardSO>();
         deckCopy.AddRange(deck);
@@ -36,12 +42,8 @@ public class DeckController : MonoBehaviour
         }
     }
 
-    public CardSO[] GetDeck() {
-        return deck;
-    }
-
     private void OnMouseDown() {
-        if(canDraw) {
+        if (canDraw) {
             canDraw = false;
             DrawCard();
             StartCoroutine(WaitBetweenDraws());
@@ -55,26 +57,36 @@ public class DeckController : MonoBehaviour
 
     private void DrawCard() {
         print("In Draw Card");
-        if(remaining.Count <= 0 && flipped.Count >= 0) {
-            print("Moving flipped back to deck");
+        if(remaining.Count <= 0 && discardPile.cards.Count >= 0) {
+            print("Moving discard back to deck");
             remaining.Clear();
-            remaining.AddRange(flipped);
             foreach(Card card in discardPile.cards) {
+                remaining.Add(card.cardSO);
                 Destroy(card.gameObject);
             }
-            flipped.Clear();
+            discardPile.cards.Clear();
         } 
+
         if(remaining.Count > 0) {
             print("Drawing a card!");
             Card newCard = Instantiate(cardToSpawn, transform.position, transform.rotation);
             newCard.SetSO(remaining[0]);
-            flipped.Add(remaining[0]);
             remaining.RemoveAt(0);
             newCard.placePoint = discardPile;
             discardPile.cards.Add(newCard);
             newCard.MoveToPoint(discardPile.transform.position+new Vector3(0f, 0f, -0.05f*discardPile.cards.Count), discardPile.transform.rotation);
-            newCard.isFaceUp = true;
+            newCard.SetCardDirection(true);
         }
+    }
+
+    public List<CardSO> GetRemainingDeck() {
+        return remaining;
+    }
+
+    public CardSO TakeCardFromRemainingDeck() {
+        CardSO cardSO = remaining[0];
+        remaining.RemoveAt(0);
+        return cardSO;
     }
 
 }

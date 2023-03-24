@@ -16,6 +16,7 @@ public class Card : MonoBehaviour
     [SerializeField] float rotateSpeed = 500f;
     [SerializeField] LayerMask tableLayer;
     [SerializeField] LayerMask placementLayer;
+    [SerializeField] GameObject cardCanvas;
     
     BoxCollider myCollider;
 
@@ -128,6 +129,11 @@ public class Card : MonoBehaviour
             img.sprite = cardSO.suitSprite;
             img.color = cardSO.suitColor;
         }
+    }
+
+    public void SetCardDirection(bool isFaceUp) {
+        this.isFaceUp = isFaceUp;
+        cardCanvas.SetActive(isFaceUp);
     }
 
 

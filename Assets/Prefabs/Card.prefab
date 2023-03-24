@@ -269,6 +269,7 @@ MonoBehaviour:
   placementLayer:
     serializedVersion: 2
     m_Bits: 128
+  cardCanvas: {fileID: 7425334787894276248}
 --- !u!65 &7425334788584155242
 BoxCollider:
   m_ObjectHideFlags: 0
