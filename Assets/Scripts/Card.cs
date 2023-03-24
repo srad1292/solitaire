@@ -33,6 +33,8 @@ public class Card : MonoBehaviour
 
     private void Start() {
         myCollider = GetComponent<BoxCollider>();
+        myCollider.enabled = false;
+        StartCoroutine(WaitToEnableCollider());
         if (targetPoint == Vector3.zero) {
             targetPoint = transform.position;
             targetRotation = transform.rotation;
@@ -48,7 +50,7 @@ public class Card : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, 100f, tableLayer)) {
-                MoveToPoint(hit.point + new Vector3(0, 2f, -2f), Quaternion.identity);
+                MoveToPoint(hit.point + new Vector3(0, 0.5f, -1.5f), Quaternion.identity);
             }
             if (Input.GetMouseButtonDown(0) && !justPressed) {
                 if(Physics.Raycast(ray, out hit, 100f, placementLayer)) {
@@ -75,6 +77,11 @@ public class Card : MonoBehaviour
         justPressed = false;
     }
 
+    IEnumerator WaitToEnableCollider() {
+        yield return new WaitForSeconds(0.3f);
+        myCollider.enabled = true;
+    }
+
     private void PlaceCard(PlacePoint point, Vector3 location, Quaternion rotation) {
         MoveToPoint(location, rotation);
         placePoint = point;
@@ -83,17 +90,19 @@ public class Card : MonoBehaviour
         }
         point.cards.Add(this);
         isSelected = false;
+        GameController.Instance.isHoldingCard = false;
         myCollider.enabled = true;
     }
 
     private void OnMouseDown() {
-        if(!isSelected && isFaceUp) {
+        if(!isSelected && isFaceUp && !GameController.Instance.isHoldingCard) {
             print("I am a selected card");
             justPressed = true;
             lastLocation = transform.position;
             lastRotation = transform.rotation;
             lastPlacePoint = placePoint;
             isSelected = true;
+            GameController.Instance.isHoldingCard = true;
             myCollider.enabled = false;
         } 
     }
