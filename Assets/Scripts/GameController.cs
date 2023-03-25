@@ -16,6 +16,8 @@ public class GameController : MonoBehaviour
 
     [SerializeField] Card cardToSpawn;
     [SerializeField] PlacePoint[] gamePlacePoints;
+    [SerializeField] PlacePoint discardPile;
+    [SerializeField] PlacePoint[] goals;
 
     public bool isHoldingCard = false;
 
@@ -24,6 +26,7 @@ public class GameController : MonoBehaviour
     }
 
     private void SetupGame() {
+        ClearField();
         DeckController.Instance.ShuffleDeckIntoRemaining();
         for(int pointIndex = 0; pointIndex < gamePlacePoints.Length; pointIndex++) {
             for(int cardIndex = 0; cardIndex < pointIndex; cardIndex++) {
@@ -31,6 +34,28 @@ public class GameController : MonoBehaviour
             }
             PlaceCardInSpot(gamePlacePoints[pointIndex], true);
         }
+    }
+
+    private void ClearField() {
+        foreach (PlacePoint point in gamePlacePoints) {
+            foreach (Card card in point.cards) {
+                Destroy(card.gameObject);
+            }
+            point.cards.Clear();
+        }
+
+        foreach (PlacePoint point in goals) {
+            foreach (Card card in point.cards) {
+                Destroy(card.gameObject);
+            }
+            point.cards.Clear();
+        }
+
+        foreach (Card card in discardPile.cards) {
+            Destroy(card.gameObject);
+        }
+        discardPile.cards.Clear();
+
     }
 
 

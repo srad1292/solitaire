@@ -1462,6 +1462,7 @@ MonoBehaviour:
   placementLayer:
     serializedVersion: 2
     m_Bits: 0
+  cardCanvas: {fileID: 0}
 --- !u!1 &587529826
 GameObject:
   m_ObjectHideFlags: 0
@@ -2392,8 +2393,8 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 0
-  orthographic size: 5
+  orthographic: 1
+  orthographic size: 5.5
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -3912,6 +3913,12 @@ MonoBehaviour:
   - {fileID: 1483873710}
   - {fileID: 1669096092}
   - {fileID: 2142449495}
+  discardPile: {fileID: 1765795477}
+  goals:
+  - {fileID: 1702640176}
+  - {fileID: 1886422498}
+  - {fileID: 1851675069}
+  - {fileID: 1686957169}
   isHoldingCard: 0
 --- !u!4 &1588019756
 Transform:
@@ -4269,6 +4276,7 @@ MonoBehaviour:
   placementLayer:
     serializedVersion: 2
     m_Bits: 0
+  cardCanvas: {fileID: 0}
 --- !u!4 &1649337497 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3866056027644671599, guid: 3fd5f852684eac34086ac7da1568be40, type: 3}
@@ -4363,6 +4371,7 @@ MonoBehaviour:
   placementLayer:
     serializedVersion: 2
     m_Bits: 0
+  cardCanvas: {fileID: 0}
 --- !u!1001 &1669096089
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4433,6 +4442,17 @@ Transform:
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3866056027644671596, guid: 3fd5f852684eac34086ac7da1568be40, type: 3}
   m_PrefabInstance: {fileID: 1669096089}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d00a18b07a4589e46b90503e640319a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1686957169 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3866056027644671596, guid: 3fd5f852684eac34086ac7da1568be40, type: 3}
+  m_PrefabInstance: {fileID: 917867530}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
@@ -4548,6 +4568,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3866056027644671599, guid: 3fd5f852684eac34086ac7da1568be40, type: 3}
   m_PrefabInstance: {fileID: 1702640173}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1702640176 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3866056027644671596, guid: 3fd5f852684eac34086ac7da1568be40, type: 3}
+  m_PrefabInstance: {fileID: 1702640173}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d00a18b07a4589e46b90503e640319a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1765795477 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3866056027644671596, guid: 3fd5f852684eac34086ac7da1568be40, type: 3}
@@ -4727,6 +4758,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3866056027644671599, guid: 3fd5f852684eac34086ac7da1568be40, type: 3}
   m_PrefabInstance: {fileID: 1851675066}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1851675069 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3866056027644671596, guid: 3fd5f852684eac34086ac7da1568be40, type: 3}
+  m_PrefabInstance: {fileID: 1851675066}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d00a18b07a4589e46b90503e640319a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1858980352
 GameObject:
   m_ObjectHideFlags: 0
@@ -4908,6 +4950,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3866056027644671599, guid: 3fd5f852684eac34086ac7da1568be40, type: 3}
   m_PrefabInstance: {fileID: 1886422495}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1886422498 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3866056027644671596, guid: 3fd5f852684eac34086ac7da1568be40, type: 3}
+  m_PrefabInstance: {fileID: 1886422495}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d00a18b07a4589e46b90503e640319a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1975003372
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5140,6 +5193,7 @@ MonoBehaviour:
   placementLayer:
     serializedVersion: 2
     m_Bits: 0
+  cardCanvas: {fileID: 0}
 --- !u!1 &2057287910
 GameObject:
   m_ObjectHideFlags: 0
