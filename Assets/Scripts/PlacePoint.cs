@@ -7,4 +7,8 @@ public class PlacePoint : MonoBehaviour
     [SerializeField] Location location;
 
     public List<Card> cards;
+
+    public Location GetLocation() {
+        return location;
+    }
 }

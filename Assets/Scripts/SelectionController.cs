@@ -34,7 +34,12 @@ public class SelectionController : MonoBehaviour
             if (Physics.Raycast(ray, out hit, 100f, placementLayer) && selectedCard != null) {
                 print("I hit placement layer");
                 PlacePoint selectedPoint = hit.collider.GetComponent<PlacePoint>();
-                if (selectedPoint != null && selectedPoint.cards.Count == 0) {
+                if(selectedPoint != null && selectedPoint == selectedCard.GetLastPlacePoint()) {
+                    selectedCard.ReturnCard();
+                    selectedCard = null;
+                }
+                else if (selectedPoint != null && selectedPoint.cards.Count == 0) {
+                    GameController.Instance.HandleCardPlaced(selectedCard);
                     selectedCard.PlaceCard(selectedPoint, selectedPoint.transform.position, selectedPoint.transform.rotation);
                     selectedCard = null;
                 }

@@ -48,39 +48,14 @@ public class Card : MonoBehaviour
         transform.position = Vector3.Lerp(transform.position, targetPoint, moveSpeed * Time.deltaTime);
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotateSpeed * Time.deltaTime);
 
-        /*if (isSelected) {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, 100f, tableLayer)) {
-                MoveToPoint(hit.point + new Vector3(0, 0.5f, -1.5f), Quaternion.identity);
-            }
-            if (Input.GetMouseButtonDown(0) && !justPressed) {
-                if(Physics.Raycast(ray, out hit, 100f, placementLayer)) {
-                    PlacePoint selectedPoint = hit.collider.GetComponent<PlacePoint>();
-                    print("Selected Point is null? " + selectedPoint == null);
-                    if(selectedPoint != null)
-                        print("Selected Point Card Count = " + selectedPoint.cards.Count);
-                    if(selectedPoint != null && selectedPoint.cards.Count == 0) {
-                        PlaceCard(selectedPoint, selectedPoint.transform.position, selectedPoint.transform.rotation);
-                    } else {
-                        PlaceCard(lastPlacePoint, lastLocation, lastRotation);
-                    }
-                } else {
-                    PlaceCard(lastPlacePoint, lastLocation, lastRotation);
-                }
-                
-            }
-
-            if (Input.GetMouseButtonDown(1)) {
-                PlaceCard(lastPlacePoint, lastLocation, lastRotation);
-            }
-        }*/
-
         justPressed = false;
     }
 
     public void ReturnCard() {
-        PlaceCard(lastPlacePoint, lastLocation, lastRotation);
+        MoveToPoint(lastLocation, lastRotation);
+        isSelected = false;
+        SelectionController.Instance.selectedCard = null;
+        myCollider.enabled = true;
     }
 
     public void SelectCard() {
@@ -90,6 +65,10 @@ public class Card : MonoBehaviour
         isSelected = true;
         SelectionController.Instance.selectedCard = this;
         myCollider.enabled = false;
+    }
+
+    public PlacePoint GetLastPlacePoint() {
+        return lastPlacePoint;
     }
     
 
@@ -102,29 +81,10 @@ public class Card : MonoBehaviour
     public void PlaceCard(PlacePoint point, Vector3 location, Quaternion rotation) {
         MoveToPoint(location, rotation);
         placePoint = point;
-        if(lastPlacePoint.cards.Contains(this)) {
-            lastPlacePoint.cards.Remove(this);
-        }
         point.cards.Add(this);
         isSelected = false;
         SelectionController.Instance.selectedCard = null;
         myCollider.enabled = true;
-    }
-
-    private void OnMouseDown() {
-        print("You clicked on a card!");
-        print("Value: " + cardSO.value);
-        print("Suit: " + cardSO.suit);
-        /*if (!isSelected && isFaceUp && SelectionController.Instance.selectedCard == null) {
-            print("I am a selected card");
-            justPressed = true;
-            lastLocation = transform.position;
-            lastRotation = transform.rotation;
-            lastPlacePoint = placePoint;
-            isSelected = true;
-            SelectionController.Instance.selectedCard = this;
-            myCollider.enabled = false;
-        } */
     }
 
     public void MoveToPoint(Vector3 destination, Quaternion rotation) {

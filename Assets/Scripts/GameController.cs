@@ -70,6 +70,20 @@ public class GameController : MonoBehaviour
         card.SetSO(cardSO);
         placePoint.cards.Add(card);
     }
+
+    public void HandleCardPlaced(Card card) {
+        PlacePoint cardLastPoint = card.GetLastPlacePoint();
+        if(cardLastPoint.cards.Contains(card)) {
+            cardLastPoint.cards.Remove(card);
+        }
+        if (cardLastPoint.GetLocation() == Location.PlayArea && cardLastPoint.cards.Count > 0) {
+            Card cardToFlip = cardLastPoint.cards[cardLastPoint.cards.Count - 1];
+            Vector3 cardLandingPoint = cardToFlip.transform.position;
+            cardToFlip.transform.position = cardToFlip.transform.position + new Vector3(0,0,-4f);
+            cardToFlip.MoveToPoint(cardLandingPoint, cardLastPoint.transform.rotation);
+            cardToFlip.SetCardDirection(true);
+        }
+    }
 }
 
 

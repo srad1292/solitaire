@@ -74,7 +74,9 @@ public class DeckController : MonoBehaviour
             remaining.RemoveAt(0);
             newCard.placePoint = discardPile;
             discardPile.cards.Add(newCard);
-            newCard.MoveToPoint(discardPile.transform.position+new Vector3(0f, 0f, -0.05f*discardPile.cards.Count), discardPile.transform.rotation);
+            float landingZ = -0.05f * discardPile.cards.Count;
+            newCard.transform.position = newCard.transform.position + new Vector3(0, 0, landingZ - 2f);
+            newCard.MoveToPoint(discardPile.transform.position+new Vector3(0f, 0f, landingZ), discardPile.transform.rotation);
             newCard.SetCardDirection(true);
         }
     }
