@@ -27,7 +27,7 @@ public class SelectionController : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, 100f, tableLayer) && selectedCard != null) {
-            selectedCard.MoveToPoint(hit.point + new Vector3(0, 0.5f, -1.5f), Quaternion.identity);
+            selectedCard.MoveToPoint(hit.point + new Vector3(1.5f, 0.5f, -3f), Quaternion.identity);
         }
         if (Input.GetMouseButtonDown(0)) {
             
@@ -38,10 +38,16 @@ public class SelectionController : MonoBehaviour
                     selectedCard.ReturnCard();
                     selectedCard = null;
                 }
-                else if (selectedPoint != null && selectedPoint.cards.Count == 0) {
-                    GameController.Instance.HandleCardPlaced(selectedCard);
-                    selectedCard.PlaceCard(selectedPoint, selectedPoint.transform.position, selectedPoint.transform.rotation);
-                    selectedCard = null;
+                else if (selectedPoint != null) {
+                    bool canPlace = GameController.Instance.CheckIfCardCanBePlacedOnPlacePoint(selectedCard, selectedPoint);
+                    if(canPlace) {
+                        GameController.Instance.HandleCardPlaced(selectedCard, selectedPoint);
+                        selectedCard = null;
+                    } else {
+                        selectedCard.ReturnCard();
+                        selectedCard = null;
+                    }
+                    
                 }
                 else {
                     selectedCard.ReturnCard();
@@ -59,8 +65,15 @@ public class SelectionController : MonoBehaviour
                     }
                 } else {
                     if(selectedCard != card) {
-                        selectedCard.ReturnCard();
-                        selectedCard = null;
+                        bool canPlace = GameController.Instance.CheckIfCardCanBePlacedOnCard(selectedCard, card);
+                        if (canPlace) {
+                            GameController.Instance.HandleCardPlaced(selectedCard, card.placePoint);
+                            selectedCard = null;
+                        } else {
+                            selectedCard.ReturnCard();
+                            selectedCard = null;
+                        }
+                        
                     }
                 }
 
