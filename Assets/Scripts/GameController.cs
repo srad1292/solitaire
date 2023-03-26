@@ -19,7 +19,6 @@ public class GameController : MonoBehaviour
     [SerializeField] PlacePoint discardPile;
     [SerializeField] PlacePoint[] goals;
 
-    public bool isHoldingCard = false;
 
     private void Start() {
         SetupGame();

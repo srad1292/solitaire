@@ -214,7 +214,7 @@ GameObject:
   - component: {fileID: 7425334788584155244}
   - component: {fileID: 7425334788584155245}
   - component: {fileID: 7425334788584155242}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Card
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -260,6 +260,7 @@ MonoBehaviour:
   - {fileID: 7425334788864057250}
   cardSO: {fileID: 0}
   isFaceUp: 0
+  canSelect: 0
   placePoint: {fileID: 0}
   moveSpeed: 5
   rotateSpeed: 500
@@ -281,8 +282,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.2004389, y: 1.8634729, z: 0.7488917}
-  m_Center: {x: -0.022563279, y: -0.036926746, z: 0.12555414}
+  m_Size: {x: 1.2, y: 2, z: 0.05}
+  m_Center: {x: 0, y: 0, z: -0.05}
 --- !u!1 &7425334788626852358
 GameObject:
   m_ObjectHideFlags: 0

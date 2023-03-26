@@ -11,6 +11,7 @@ public class Card : MonoBehaviour
     public Image[] suitDisplays;
     public CardSO cardSO;
     public bool isFaceUp = false;
+    public bool canSelect = false;
     public PlacePoint placePoint;
     [SerializeField] float moveSpeed = 5f;
     [SerializeField] float rotateSpeed = 500f;
@@ -47,7 +48,7 @@ public class Card : MonoBehaviour
         transform.position = Vector3.Lerp(transform.position, targetPoint, moveSpeed * Time.deltaTime);
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotateSpeed * Time.deltaTime);
 
-        if (isSelected) {
+        /*if (isSelected) {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, 100f, tableLayer)) {
@@ -73,17 +74,32 @@ public class Card : MonoBehaviour
             if (Input.GetMouseButtonDown(1)) {
                 PlaceCard(lastPlacePoint, lastLocation, lastRotation);
             }
-        }
+        }*/
 
         justPressed = false;
     }
 
+    public void ReturnCard() {
+        PlaceCard(lastPlacePoint, lastLocation, lastRotation);
+    }
+
+    public void SelectCard() {
+        lastLocation = transform.position;
+        lastRotation = transform.rotation;
+        lastPlacePoint = placePoint;
+        isSelected = true;
+        SelectionController.Instance.selectedCard = this;
+        myCollider.enabled = false;
+    }
+    
+
     IEnumerator WaitToEnableCollider() {
         yield return new WaitForSeconds(0.3f);
         myCollider.enabled = true;
+        canSelect = true;
     }
 
-    private void PlaceCard(PlacePoint point, Vector3 location, Quaternion rotation) {
+    public void PlaceCard(PlacePoint point, Vector3 location, Quaternion rotation) {
         MoveToPoint(location, rotation);
         placePoint = point;
         if(lastPlacePoint.cards.Contains(this)) {
@@ -91,21 +107,24 @@ public class Card : MonoBehaviour
         }
         point.cards.Add(this);
         isSelected = false;
-        GameController.Instance.isHoldingCard = false;
+        SelectionController.Instance.selectedCard = null;
         myCollider.enabled = true;
     }
 
     private void OnMouseDown() {
-        if(!isSelected && isFaceUp && !GameController.Instance.isHoldingCard) {
+        print("You clicked on a card!");
+        print("Value: " + cardSO.value);
+        print("Suit: " + cardSO.suit);
+        /*if (!isSelected && isFaceUp && SelectionController.Instance.selectedCard == null) {
             print("I am a selected card");
             justPressed = true;
             lastLocation = transform.position;
             lastRotation = transform.rotation;
             lastPlacePoint = placePoint;
             isSelected = true;
-            GameController.Instance.isHoldingCard = true;
+            SelectionController.Instance.selectedCard = this;
             myCollider.enabled = false;
-        } 
+        } */
     }
 
     public void MoveToPoint(Vector3 destination, Quaternion rotation) {
