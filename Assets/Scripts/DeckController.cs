@@ -16,18 +16,18 @@ public class DeckController : MonoBehaviour
     }
 
     public Card cardToSpawn;
-
+    public Sprite deckEmptySprite;
+    public Sprite deckSprite;
     [SerializeField] CardSO[] deck;
-
     [SerializeField] float timeBetweenDraws;
-
     public List<CardSO> remaining;
-
     public PlacePoint discardPile;
-
     private bool canDraw = true;
 
+    private SpriteRenderer myRenderer;
+
     private void Start() {
+        myRenderer = GetComponent<SpriteRenderer>();
     }
 
     public void ShuffleDeckIntoRemaining() {
@@ -65,6 +65,7 @@ public class DeckController : MonoBehaviour
                 Destroy(card.gameObject);
             }
             discardPile.cards.Clear();
+            myRenderer.sprite = deckSprite;
         } 
 
         if(remaining.Count > 0) {
@@ -78,6 +79,10 @@ public class DeckController : MonoBehaviour
             newCard.transform.position = newCard.transform.position + new Vector3(0, 0, landingZ - 2f);
             newCard.MoveToPoint(discardPile.transform.position+new Vector3(0f, 0f, landingZ), discardPile.transform.rotation);
             newCard.SetCardDirection(true);
+        }
+
+        if(remaining.Count == 0) {
+            myRenderer.sprite = deckEmptySprite;
         }
     }
 
