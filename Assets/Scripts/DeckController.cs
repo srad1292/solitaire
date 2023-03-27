@@ -42,6 +42,7 @@ public class DeckController : MonoBehaviour
         }
     }
 
+    
     private void OnMouseDown() {
         if (canDraw) {
             canDraw = false;
@@ -49,6 +50,8 @@ public class DeckController : MonoBehaviour
             StartCoroutine(WaitBetweenDraws());
         }
     }
+
+    
 
     IEnumerator WaitBetweenDraws() {
         yield return new WaitForSeconds(timeBetweenDraws);

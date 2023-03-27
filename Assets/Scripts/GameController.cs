@@ -106,7 +106,7 @@ public class GameController : MonoBehaviour
         CardSO cardSO = DeckController.Instance.TakeCardFromRemainingDeck();
         Card card = Instantiate(
             cardToSpawn,
-            placePoint.transform.position + new Vector3(0f, -0.5f * placePoint.cards.Count, -0.02f * placePoint.cards.Count),
+            placePoint.transform.position + new Vector3(0f, -0.4f * placePoint.cards.Count, -0.02f * placePoint.cards.Count),
             isFaceUp ? placePoint.transform.rotation : new Quaternion(0, 1, 0, 0)
         );
         card.SetCardDirection(isFaceUp);
@@ -129,7 +129,7 @@ public class GameController : MonoBehaviour
         }
 
         int multiplier = placePoint.cards.Count;
-        Vector3 cardOffset = placePoint.GetLocation() == Location.Goal ? new Vector3(0f, 0f, -0.5f * multiplier) : new Vector3(0f, -0.5f * multiplier, -0.2f * multiplier);
+        Vector3 cardOffset = placePoint.GetLocation() == Location.Goal ? new Vector3(0f, 0f, -0.4f * multiplier) : new Vector3(0f, -0.4f * multiplier, -0.2f * multiplier);
         Vector3 landingPosition = placePoint.transform.position + cardOffset;
         print("Placing card at spot: " + landingPosition);
         selectedCard.PlaceCard(placePoint, landingPosition, placePoint.transform.rotation);
