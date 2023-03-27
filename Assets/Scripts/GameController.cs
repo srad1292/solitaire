@@ -92,6 +92,7 @@ public class GameController : MonoBehaviour
         
         else if(cardToLandOn.placePoint.GetLocation() == Location.PlayArea) {
             print("In else if 2");
+            print("A color: " + selectedCard.cardSO.suitColor + " B color: " + cardToLandOn.cardSO.suitColor);
             return selectedCard.cardSO.suitColor != cardToLandOn.cardSO.suitColor && selectedCard.cardSO.value == cardToLandOn.cardSO.value - 1;
         }
 
@@ -132,6 +133,44 @@ public class GameController : MonoBehaviour
         Vector3 landingPosition = placePoint.transform.position + cardOffset;
         print("Placing card at spot: " + landingPosition);
         selectedCard.PlaceCard(placePoint, landingPosition, placePoint.transform.rotation);
+    }
+
+    public PlacePoint CheckForDestination(Card selectedCard) {
+        if(!selectedCard.isFaceUp || selectedCard.placePoint.GetLocation() == Location.Goal) {
+            return null;
+        }
+
+        int cardIndex = -1;
+        List<Card> cards = selectedCard.placePoint.cards;
+        for(int idx = 0; idx < cards.Count; idx++) { 
+            if(cards[idx] == selectedCard) {
+                cardIndex = idx; 
+            }
+        }
+        if(cardIndex == -1 || cardIndex != cards.Count-1) {
+            return null;
+        }
+
+        PlacePoint result = null;
+        foreach(PlacePoint placePoint in goals) {
+            bool canPlace = CheckIfCardCanBePlacedOnPlacePoint(selectedCard, placePoint);
+            if(canPlace) {
+                result = placePoint;
+                break;
+            }
+        }
+
+        if(result == null) {
+            foreach(PlacePoint placePoint in gamePlacePoints) {
+                bool canPlace = CheckIfCardCanBePlacedOnPlacePoint(selectedCard, placePoint);
+                if (canPlace) {
+                    result = placePoint;
+                    break;
+                }
+            }
+        }
+
+        return result;
     }
 }
 

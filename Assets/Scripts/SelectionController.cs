@@ -82,6 +82,15 @@ public class SelectionController : MonoBehaviour
             if(selectedCard != null) {
                 selectedCard.ReturnCard();
                 selectedCard = null;
+            } else if(Physics.Raycast(ray, out hit, 100f, cardLayer)) {
+                Card card = hit.collider.GetComponent<Card>();
+                PlacePoint destination = GameController.Instance.CheckForDestination(card);
+                if(destination != null) {
+                    card.SelectCard();
+                    selectedCard = card;
+                    GameController.Instance.HandleCardPlaced(selectedCard, destination);
+                    selectedCard = null;
+                }
             }
         }
     }
