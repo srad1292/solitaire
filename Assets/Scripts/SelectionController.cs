@@ -18,60 +18,90 @@ public class SelectionController : MonoBehaviour
     [SerializeField] LayerMask cardLayer;
     [SerializeField] LayerMask tableLayer;
     [SerializeField] LayerMask placementLayer;
-    public Card selectedCard = null;
-
+    public List<Card> selectedCards = new List<Card>();
 
 
     void Update()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, 100f, tableLayer) && selectedCard != null) {
-            selectedCard.MoveToPoint(hit.point + new Vector3(1.5f, 0.5f, -3f), Quaternion.identity);
+        if (Physics.Raycast(ray, out hit, 100f, tableLayer) && selectedCards.Count > 0) {
+            for(int idx = 0; idx < selectedCards.Count; idx++) {
+                selectedCards[idx].MoveToPoint(
+                    hit.point + new Vector3(1.5f, -0.5f + (-0.4f * idx), -3f + (-0.2f*idx)), 
+                    Quaternion.identity
+                );
+            }
         }
         if (Input.GetMouseButtonDown(0)) {
             
-            if (Physics.Raycast(ray, out hit, 100f, placementLayer) && selectedCard != null) {
+            if (Physics.Raycast(ray, out hit, 100f, placementLayer) && selectedCards.Count > 0) {
                 print("I hit placement layer");
                 PlacePoint selectedPoint = hit.collider.GetComponent<PlacePoint>();
-                if(selectedPoint != null && selectedPoint == selectedCard.GetLastPlacePoint()) {
-                    selectedCard.ReturnCard();
-                    selectedCard = null;
+                if(selectedPoint != null && selectedPoint == selectedCards[0].GetLastPlacePoint()) {
+                    foreach(Card card in selectedCards) {
+                        card.ReturnCard();
+                    }
+                    selectedCards.Clear();
                 }
                 else if (selectedPoint != null) {
-                    bool canPlace = GameController.Instance.CheckIfCardCanBePlacedOnPlacePoint(selectedCard, selectedPoint);
+                    bool canPlace = GameController.Instance.CheckIfCardCanBePlacedOnPlacePoint(selectedCards[0], selectedPoint);
                     if(canPlace) {
-                        GameController.Instance.HandleCardPlaced(selectedCard, selectedPoint);
-                        selectedCard = null;
+                        foreach(Card card in selectedCards) {
+                            GameController.Instance.HandleCardPlaced(card, selectedPoint);
+                        }
+                        selectedCards.Clear();
                     } else {
-                        selectedCard.ReturnCard();
-                        selectedCard = null;
+                        foreach (Card card in selectedCards) {
+                            card.ReturnCard();
+                        }
+                        selectedCards.Clear();
                     }
                     
                 }
                 else {
-                    selectedCard.ReturnCard();
-                    selectedCard = null;
+                    foreach (Card card in selectedCards) {
+                        card.ReturnCard();
+                    }
+                    selectedCards.Clear();
                 }
             }
             else if (Physics.Raycast(ray, out hit, 100f, cardLayer)) {
                 Card card = hit.collider.GetComponent<Card>();
                 print("SC HIT: " + card.cardSO.value + " of " + card.cardSO.suit);
-                if (selectedCard == null) {
+                if (selectedCards.Count == 0) {
                     if(card.isFaceUp && card.canSelect) {
-                        card.SelectCard();
-                        selectedCard = card;
+                        bool cardFound = false;
+                        for(int cardIdx = 0; cardIdx < card.placePoint.cards.Count; cardIdx++) {
+                            if(card.placePoint.cards[cardIdx] == card) {
+                                cardFound = true;
+                            }
+                            if(cardFound) {
+                                selectedCards.Add(card.placePoint.cards[cardIdx]);
+                                card.placePoint.cards[cardIdx].SelectCard();
 
+                            }
+                        }
                     }
                 } else {
-                    if(selectedCard != card) {
-                        bool canPlace = GameController.Instance.CheckIfCardCanBePlacedOnCard(selectedCard, card);
+                    bool clickedOnHeldCard = false;
+                    foreach(Card curCard in selectedCards) {
+                        if(curCard == card) {
+                            clickedOnHeldCard = true;
+                        }
+                    }
+                    if(!clickedOnHeldCard) {
+                        bool canPlace = GameController.Instance.CheckIfCardCanBePlacedOnCard(selectedCards[0], card);
                         if (canPlace) {
-                            GameController.Instance.HandleCardPlaced(selectedCard, card.placePoint);
-                            selectedCard = null;
+                            foreach (Card curcard in selectedCards) {
+                                GameController.Instance.HandleCardPlaced(curcard, card.placePoint);
+                            }
+                            selectedCards.Clear();
                         } else {
-                            selectedCard.ReturnCard();
-                            selectedCard = null;
+                            foreach (Card curcard in selectedCards) {
+                                curcard.ReturnCard();
+                            }
+                            selectedCards.Clear();
                         }
                         
                     }
@@ -79,17 +109,21 @@ public class SelectionController : MonoBehaviour
 
             }
         } else if(Input.GetMouseButtonDown(1)) {
-            if(selectedCard != null) {
-                selectedCard.ReturnCard();
-                selectedCard = null;
+            if(selectedCards.Count > 0) {
+                foreach (Card curcard in selectedCards) {
+                    curcard.ReturnCard();
+                }
+                selectedCards.Clear();
             } else if(Physics.Raycast(ray, out hit, 100f, cardLayer)) {
                 Card card = hit.collider.GetComponent<Card>();
                 PlacePoint destination = GameController.Instance.CheckForDestination(card);
                 if(destination != null) {
                     card.SelectCard();
-                    selectedCard = card;
-                    GameController.Instance.HandleCardPlaced(selectedCard, destination);
-                    selectedCard = null;
+
+                    selectedCards.Add(card);
+                    GameController.Instance.HandleCardPlaced(selectedCards[0], destination);
+                    selectedCards.Clear();
+
                 }
             }
         }

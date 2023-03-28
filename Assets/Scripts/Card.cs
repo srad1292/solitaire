@@ -54,7 +54,6 @@ public class Card : MonoBehaviour
     public void ReturnCard() {
         MoveToPoint(lastLocation, lastRotation);
         isSelected = false;
-        SelectionController.Instance.selectedCard = null;
         myCollider.enabled = true;
     }
 
@@ -63,7 +62,6 @@ public class Card : MonoBehaviour
         lastRotation = transform.rotation;
         lastPlacePoint = placePoint;
         isSelected = true;
-        SelectionController.Instance.selectedCard = this;
         myCollider.enabled = false;
     }
 
@@ -83,7 +81,6 @@ public class Card : MonoBehaviour
         placePoint = point;
         point.cards.Add(this);
         isSelected = false;
-        SelectionController.Instance.selectedCard = null;
         myCollider.enabled = true;
     }
 
