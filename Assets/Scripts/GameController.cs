@@ -15,6 +15,7 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public bool isGameComplete = false;
     [SerializeField] Card cardToSpawn;
     [SerializeField] PlacePoint[] gamePlacePoints;
     [SerializeField] PlacePoint discardPile;
@@ -80,23 +81,16 @@ public class GameController : MonoBehaviour
     }
 
     public bool CheckIfCardCanBePlacedOnCard(Card selectedCard, Card cardToLandOn) {
-        print("In check if card can be placed on card");
         if(cardToLandOn.placePoint == null || cardToLandOn.placePoint.GetLocation() == Location.Discard || !cardToLandOn.isFaceUp) {
-            print("In if");
             return false;
         }
         else if(cardToLandOn.placePoint.GetLocation() == Location.Goal) {
-            print("In else if 1");
             return selectedCard.cardSO.suit == cardToLandOn.cardSO.suit && selectedCard.cardSO.value == cardToLandOn.cardSO.value + 1;
         }
         
         else if(cardToLandOn.placePoint.GetLocation() == Location.PlayArea) {
-            print("In else if 2");
-            print("A color: " + selectedCard.cardSO.suitColor + " B color: " + cardToLandOn.cardSO.suitColor);
             return selectedCard.cardSO.suitColor != cardToLandOn.cardSO.suitColor && selectedCard.cardSO.value == cardToLandOn.cardSO.value - 1;
         }
-
-        print("Met no conditions");
 
         return false;
 
@@ -117,22 +111,112 @@ public class GameController : MonoBehaviour
 
     public void HandleCardPlaced(Card selectedCard, PlacePoint placePoint) {
         PlacePoint cardLastPoint = selectedCard.GetLastPlacePoint();
-        if(cardLastPoint.cards.Contains(selectedCard)) {
-            cardLastPoint.cards.Remove(selectedCard);
+        if(cardLastPoint != null) {
+            if (cardLastPoint.cards.Contains(selectedCard)) {
+                cardLastPoint.cards.Remove(selectedCard);
+            }
+            if (cardLastPoint.GetLocation() == Location.PlayArea && cardLastPoint.cards.Count > 0) {
+                Card cardToFlip = cardLastPoint.cards[cardLastPoint.cards.Count - 1];
+                Vector3 cardLandingPoint = cardToFlip.transform.position;
+                cardToFlip.transform.position = cardToFlip.transform.position + new Vector3(0, 0, -4f);
+                cardToFlip.MoveToPoint(cardLandingPoint, cardLastPoint.transform.rotation);
+                cardToFlip.SetCardDirection(true);
+            }
         }
-        if (cardLastPoint.GetLocation() == Location.PlayArea && cardLastPoint.cards.Count > 0) {
-            Card cardToFlip = cardLastPoint.cards[cardLastPoint.cards.Count - 1];
-            Vector3 cardLandingPoint = cardToFlip.transform.position;
-            cardToFlip.transform.position = cardToFlip.transform.position + new Vector3(0,0,-4f);
-            cardToFlip.MoveToPoint(cardLandingPoint, cardLastPoint.transform.rotation);
-            cardToFlip.SetCardDirection(true);
-        }
+        
 
         int multiplier = placePoint.cards.Count;
         Vector3 cardOffset = placePoint.GetLocation() == Location.Goal ? new Vector3(0f, 0f, -0.4f * multiplier) : new Vector3(0f, -0.4f * multiplier, -0.2f * multiplier);
         Vector3 landingPosition = placePoint.transform.position + cardOffset;
-        print("Placing card at spot: " + landingPosition);
         selectedCard.PlaceCard(placePoint, landingPosition, placePoint.transform.rotation);
+        if(!isGameComplete) {
+            bool gameComplete = CheckIfGameIsComplete();
+            if (gameComplete) {
+                isGameComplete = true;
+                AutoCompleteGame();
+            }
+        }
+        
+    }
+
+    private bool CheckIfGameIsComplete() {
+        bool isDeckAndDiscardEmpty = DeckController.Instance.remaining.Count == 0 && discardPile.cards.Count == 0;
+        bool isEveryPlayPileFaceUp = true;
+        if (isDeckAndDiscardEmpty) {
+            foreach(PlacePoint point in gamePlacePoints) {
+                foreach (Card card in point.cards) {
+                    if (!card.isFaceUp) {
+                        isEveryPlayPileFaceUp = false;
+                        break;
+                    }
+                }
+                if(!isEveryPlayPileFaceUp) {
+                    break;
+                }
+            }
+        }
+
+
+        return isDeckAndDiscardEmpty && isEveryPlayPileFaceUp;
+    }
+
+    private void AutoCompleteGame() {
+        if(!isGameComplete) {
+            return;
+        }
+        List<Card> cardsInField = new List<Card>();
+        foreach (PlacePoint placePoint in gamePlacePoints) {
+            foreach (Card card in placePoint.cards) {
+                cardsInField.Add(card);
+            }
+        }
+
+        cardsInField.Sort(delegate (Card a, Card b) {
+            return a.cardSO.value - b.cardSO.value;
+        });
+
+        int diamondPointIdx = -1;
+        int clubPointIdx = -1;
+        int heartPointIdx = -1;
+        int spadePointIdx = -1;
+
+        PlacePoint point;
+        for(int idx = 0; idx < goals.Length; idx++) {
+            point = goals[idx];
+            if(point.cards.Count > 0 && point.cards[0].cardSO.suit == Suit.Diamond) {
+                diamondPointIdx = idx;
+            } else if (point.cards.Count > 0 && point.cards[0].cardSO.suit == Suit.Club) {
+                clubPointIdx = idx;
+            } else if (point.cards.Count > 0 && point.cards[0].cardSO.suit == Suit.Heart) {
+                heartPointIdx = idx;
+            } else if (point.cards.Count > 0 && point.cards[0].cardSO.suit == Suit.Spade) {
+                spadePointIdx = idx;
+            }
+        }
+
+        for (int idx = 0; idx < goals.Length; idx++) {
+            if(diamondPointIdx < 0 && goals[idx].cards.Count == 0) {
+                diamondPointIdx = idx;
+            }
+            else if (clubPointIdx < 0 && goals[idx].cards.Count == 0) {
+                clubPointIdx = idx;
+            }
+            else if (heartPointIdx < 0 && goals[idx].cards.Count == 0) {
+                heartPointIdx = idx;
+            }
+            else if (spadePointIdx < 0 && goals[idx].cards.Count == 0) {
+                spadePointIdx = idx;
+            }
+        }
+
+       foreach (Card card in cardsInField) {
+            PlacePoint destination;
+            if (card.cardSO.suit == Suit.Diamond) { destination = goals[diamondPointIdx]; }
+            else if (card.cardSO.suit == Suit.Club) { destination = goals[clubPointIdx]; }
+            else if (card.cardSO.suit == Suit.Heart) { destination = goals[heartPointIdx]; }
+            else { destination = goals[spadePointIdx]; }
+            HandleCardPlaced(card, destination);
+        }
     }
 
     public PlacePoint CheckForDestination(Card selectedCard) {
