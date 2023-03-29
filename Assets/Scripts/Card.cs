@@ -21,10 +21,7 @@ public class Card : MonoBehaviour
     
     BoxCollider myCollider;
 
-
     private bool isSelected = false;
-    private bool justPressed = false;
-
     private Vector3 targetPoint;
     private Quaternion targetRotation;
     private Vector3 lastLocation;
@@ -47,8 +44,12 @@ public class Card : MonoBehaviour
     private void Update() {
         transform.position = Vector3.Lerp(transform.position, targetPoint, moveSpeed * Time.deltaTime);
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotateSpeed * Time.deltaTime);
+    }
 
-        justPressed = false;
+    IEnumerator WaitToEnableCollider() {
+        yield return new WaitForSeconds(0.3f);
+        myCollider.enabled = true;
+        canSelect = true;
     }
 
     public void ReturnCard() {
@@ -69,13 +70,6 @@ public class Card : MonoBehaviour
         return lastPlacePoint;
     }
     
-
-    IEnumerator WaitToEnableCollider() {
-        yield return new WaitForSeconds(0.3f);
-        myCollider.enabled = true;
-        canSelect = true;
-    }
-
     public void PlaceCard(PlacePoint point, Vector3 location, Quaternion rotation) {
         MoveToPoint(location, rotation);
         placePoint = point;

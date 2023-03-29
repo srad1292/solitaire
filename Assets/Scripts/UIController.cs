@@ -30,10 +30,10 @@ public class UIController : MonoBehaviour
             Time.timeScale = 1f;
         }
         else {
+            // Pause Game
             isPaused = true;
             pauseMenu.SetActive(true);
             Time.timeScale = 0f;
-
         }
     }
 

@@ -58,35 +58,40 @@ public class DeckController : MonoBehaviour
     }
 
     private void DrawCard() {
-        print("In Draw Card");
         if(remaining.Count <= 0 && discardPile.cards.Count >= 0) {
-            print("Moving discard back to deck");
-            remaining.Clear();
-            foreach(Card card in discardPile.cards) {
-                remaining.Add(card.cardSO);
-                Destroy(card.gameObject);
-            }
-            discardPile.cards.Clear();
-            myRenderer.sprite = deckSprite;
-        } 
-
-        if(remaining.Count > 0) {
-            print("Drawing a card!");
-            Card newCard = Instantiate(cardToSpawn, transform.position, transform.rotation);
-            newCard.SetSO(remaining[0]);
-            remaining.RemoveAt(0);
-            newCard.placePoint = discardPile;
-            discardPile.cards.Add(newCard);
-            float landingZ = -0.05f * discardPile.cards.Count;
-            newCard.transform.position = newCard.transform.position + new Vector3(0, 0, landingZ - 2f);
-            newCard.MoveToPoint(discardPile.transform.position+new Vector3(0f, 0f, landingZ), discardPile.transform.rotation);
-            newCard.SetCardDirection(true);
+            MoveDiscardBackToDeck();
         }
 
-        if(remaining.Count == 0) {
+        if (remaining.Count > 0) {
+            DrawAndAddToDiscard();
+        }
+
+        if (remaining.Count == 0) {
             myRenderer.sprite = deckEmptySprite;
         }
     }
+    private void MoveDiscardBackToDeck() {
+        remaining.Clear();
+        foreach (Card card in discardPile.cards) {
+            remaining.Add(card.cardSO);
+            Destroy(card.gameObject);
+        }
+        discardPile.cards.Clear();
+        myRenderer.sprite = deckSprite;
+    }
+
+    private void DrawAndAddToDiscard() {
+        Card newCard = Instantiate(cardToSpawn, transform.position, transform.rotation);
+        newCard.SetSO(remaining[0]);
+        remaining.RemoveAt(0);
+        newCard.placePoint = discardPile;
+        discardPile.cards.Add(newCard);
+        float landingZ = -0.05f * discardPile.cards.Count;
+        newCard.transform.position = newCard.transform.position + new Vector3(0, 0, landingZ - 2f);
+        newCard.MoveToPoint(discardPile.transform.position + new Vector3(0f, 0f, landingZ), discardPile.transform.rotation);
+        newCard.SetCardDirection(true);
+    }
+
 
     public List<CardSO> GetRemainingDeck() {
         return remaining;
