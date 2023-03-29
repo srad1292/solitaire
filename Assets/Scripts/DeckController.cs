@@ -12,6 +12,8 @@ public class DeckController : MonoBehaviour
             Destroy(this);
         } else {
             Instance = this;
+            myRenderer = GetComponent<SpriteRenderer>();
+
         }
     }
 
@@ -26,12 +28,9 @@ public class DeckController : MonoBehaviour
 
     private SpriteRenderer myRenderer;
 
-    private void Start() {
-        myRenderer = GetComponent<SpriteRenderer>();
-    }
-
     public void ShuffleDeckIntoRemaining() {
         remaining.Clear();
+        myRenderer.sprite = deckSprite;
         List<CardSO> deckCopy = new List<CardSO>();
         deckCopy.AddRange(deck);
         int idx = 0;

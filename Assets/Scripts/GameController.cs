@@ -26,7 +26,7 @@ public class GameController : MonoBehaviour
         SetupGame();
     }
 
-    private void SetupGame() {
+    public void SetupGame() {
         ClearField();
         DeckController.Instance.ShuffleDeckIntoRemaining();
         for(int pointIndex = 0; pointIndex < gamePlacePoints.Length; pointIndex++) {
@@ -35,6 +35,7 @@ public class GameController : MonoBehaviour
             }
             PlaceCardInSpot(gamePlacePoints[pointIndex], true);
         }
+        isGameComplete = false;
     }
 
     private void ClearField() {
